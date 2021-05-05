@@ -15,7 +15,7 @@ template<class incon, class outcon>
 outcon Move(incon first, incon last, outcon beg)
 {
 	using smth = decltype(*first);
-
+	/*
 	if constexpr (_Is_random_iter_v<incon> || is_pointer_v<decay_t<incon>>)
 	{
 		if constexpr (_Is_random_iter_v<outcon> || is_pointer_v<decay_t<outcon>>)
@@ -48,6 +48,7 @@ outcon Move(incon first, incon last, outcon beg)
 		}
 	}
 	else
+	*/
 	{	
 		auto tt = beg;
 		for (auto t = first; t != last; ++t, ++tt)
