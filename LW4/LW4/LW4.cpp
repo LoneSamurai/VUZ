@@ -10,7 +10,7 @@
 #include <iostream>
 
 using namespace std;
- 
+
 template<class Incon, class Outcon>
 Outcon Move(Incon first, Incon last, Outcon beg)
 {
@@ -139,7 +139,6 @@ int main()
 	cout << endl << "Вектор" << endl;
 	showcon(v2);
 	cout << endl << "Массив" << endl;
-
 	for (int i = 0; i < MAX; ++i)
 	{
 		cout << a[i] << " ";
