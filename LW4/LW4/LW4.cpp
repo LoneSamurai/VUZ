@@ -3,7 +3,7 @@
 #ifdef DEBUG
 #include <list>
 #include <vector>
-#else // DEBUG
+#else
 #include "Vector.h"
 #include "List.h"
 #endif
@@ -11,22 +11,22 @@
 
 using namespace std;
 
-template<class incon, class outcon>
-outcon Move(incon first, incon last, outcon beg)
+template<class Incon, class Outcon>
+Outcon Move(Incon first, Incon last, Outcon beg)
 {
 	using smth = decltype(*first);
 
-	if constexpr (_Is_random_iter_v<incon> || is_pointer_v<decay_t<incon>>)
+	if constexpr (_Is_random_iter_v<Incon> || is_pointer_v<decay_t<Incon>>)
 	{
-		if constexpr (_Is_random_iter_v<outcon> || is_pointer_v<decay_t<outcon>>)
+		if constexpr (_Is_random_iter_v<Outcon> || is_pointer_v<decay_t<Outcon>>)
 		{
 			int d = (last - first);
-			if (&*beg > & *first && &*beg < &*last)
+			if (beg > first && beg < last)
 			{
 				--last;
 				for (auto i = beg + d - 1; first != last; --i, --last)
 				{
-					*i = *last;
+					*i = static_cast<smth&&> (*last);
 				}
 				*beg = *first;
 				beg += d;
@@ -35,7 +35,7 @@ outcon Move(incon first, incon last, outcon beg)
 			{
 				for (; first != last; ++beg, ++first)
 				{
-					*beg = *first;
+					*beg = static_cast<smth&&>(*first);
 				}
 			}
 		}
@@ -43,7 +43,7 @@ outcon Move(incon first, incon last, outcon beg)
 		{
 			for (; first != last; ++beg, ++first)
 			{
-				*beg = *first;
+				*beg = static_cast<smth&&>(*first);
 			}
 		}
 	}
@@ -82,45 +82,62 @@ outcon Move(incon first, incon last, outcon beg)
 	return beg;
 }
 
-const int MAX = 20;
-
-int main()
+template<class Con>
+void showcon(Con c)
 {
-	setlocale(0, "");
-	list<int> aa, bb;
-	vector<int> v2;
-	int a[MAX];
-	for (auto i = 0; i < MAX; ++i)
+	for (const auto& i : c)
 	{
-		bb.push_back(i);
-		aa.push_back(i);
-		v2.push_back(i);
-		a[i] = i;
 		cout << i << " ";
 	}
+}
 
-	cout << endl;
-	auto ii = aa.begin();
-	auto jj = aa.end();
-	for (int i = 0; i < 3; ++i)
+template <typename Iter>
+void displace_list_iter(typename Iter& ii, typename Iter& jj, const unsigned int s)
+{
+	for (int i = 0; i < s; ++i)
 	{
 		++ii;
 		--jj;
 	}
+}
+
+const int MAX = 20;
+
+void init_con(list<int>& aa, vector<int>& v2, int* a)
+{
+	auto lit = aa.begin();
+	for (auto i = 0; i < MAX; ++i, ++lit)
+	{
+		*lit = i;
+		v2[i] = i;
+		a[i] = i;
+	}
+}
+
+int main()
+{
+	setlocale(0, "");
+	list<int> aa(20);
+	vector<int> v2(20);
+	int a[MAX];
+	const unsigned int s = 3;
+
+	init_con(aa, v2, a);
+	showcon(v2);
+	cout << endl;
+
+	auto ii = aa.begin();
+	auto jj = aa.end();
+	displace_list_iter(ii, jj, s);
+
 	cout << "Move:" << endl;
 	Move(aa.begin(), jj, ii);
 	Move(v2.begin() + 5, v2.end(), v2.begin());
 	Move(a + 7, a + MAX - 1, a);
 	cout << "Список" << endl;
-	for (auto i : aa)
-	{
-		cout << i << " ";
-	}
+	showcon(aa);
 	cout << endl << "Вектор" << endl;
-	for (auto i : v2)
-	{
-		cout << i << " ";
-	}
+	showcon(v2);
 	cout << endl << "Массив" << endl;
 	for (int i = 0; i < MAX; ++i)
 	{
@@ -128,33 +145,18 @@ int main()
 	}
 #ifdef DEBUG
 	cout << endl << endl;
-	for (auto i = 0; i < MAX; ++i)
-	{
-		v2[i] = i;;
-		a[i] = i;
-	}
-	ii = bb.begin();
-	jj = bb.end();
-	for (int i = 0; i < 3; ++i)
-	{
-		++ii;
-		--jj;
-	}
+	init_con(aa, v2, a);
+
 	cout << "Copy:" << endl;
-	copy(bb.begin(), jj, ii);
+	copy(aa.begin(), jj, ii);
 	copy(v2.begin() + 5, v2.end(), v2.begin());
 	copy(a + 7, a + MAX - 1, a);
 	cout << "Список" << endl;
-	for (auto i : bb)
-	{
-		cout << i << " ";
-	}
+	showcon(aa);
 	cout << endl << "Вектор" << endl;
-	for (auto i : v2)
-	{
-		cout << i << " ";
-	}
+	showcon(v2);
 	cout << endl << "Массив" <<endl;
+
 	for (int i = 0; i < MAX; ++i)
 	{
 		cout << a[i] << " ";

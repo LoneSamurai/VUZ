@@ -31,6 +31,10 @@ public:
 		typename iterator& operator+(const int);
 		typename iterator& operator+=(const int);
 		typename iterator& operator=(const iterator&);
+		bool operator<(const iterator&);
+		bool operator<=(const iterator&);
+		bool operator>(const iterator&);
+		bool operator>=(const iterator&);
 		bool operator!=(const iterator&) const;
 		bool operator==(const iterator&) const;
 	};
@@ -476,6 +480,30 @@ typename vector<type>::iterator& vector<type>::iterator::operator=(const iterato
 {
 	index = it.index;
 	return *this;
+}
+
+template<class type>
+bool vector<type>::iterator::operator<(const iterator& it)
+{
+	return index < it.index;
+}
+
+template<class type>
+bool vector<type>::iterator::operator<=(const iterator& it)
+{
+	return index <= it.index;
+}
+
+template<class type>
+bool vector<type>::iterator::operator>(const iterator& it)
+{
+	return index > it.index;
+}
+
+template<class type>
+bool vector<type>::iterator::operator>=(const iterator& it)
+{
+	return index >= it.index;
 }
 
 template<class type>
