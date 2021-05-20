@@ -1,4 +1,4 @@
-﻿#define DEBU
+#define DEBU
 
 #ifdef DEBUG
 #include <list>
